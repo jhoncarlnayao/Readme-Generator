@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>README Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1916;--ink-2:#4a4843;--ink-3:#8a8880;--ink-4:#b8b5af;
+  --paper:#faf9f6;--paper-2:#f3f1ec;--paper-3:#e8e5de;
+  --line:rgba(26,25,22,.1);--line-2:rgba(26,25,22,.06);
+  --accent:#c9622a;--accent-dim:#f0ddd3;--green:#2a7a4b;--green-dim:#d2ead9;
+  --radius:10px;--radius-sm:6px;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --serif:'Fraunces',Georgia,serif;
+  --mono:'DM Mono','Fira Code',monospace;
+}
+html,body{height:100%;background:var(--paper-2)}
+body{font-family:var(--sans);font-size:13px;color:var(--ink);display:flex;flex-direction:column;min-height:100vh}
+
+/* Top bar */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:48px;background:var(--paper);border-bottom:1px solid var(--line);flex-shrink:0}
+.logo{font-family:var(--serif);font-size:16px;font-weight:400;font-style:italic;display:flex;align-items:center;gap:8px}
+.logo-mark{width:26px;height:26px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:13px;height:13px;fill:var(--paper)}
+.char-pill{font-size:10.5px;color:var(--ink-4);background:var(--paper-2);border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-family:var(--mono)}
+
+/* Layout */
+.main{display:flex;flex:1;height:calc(100vh - 48px);overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:280px;flex-shrink:0;background:var(--paper);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:16px}
+.sidebar-scroll::-webkit-scrollbar{width:3px}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:99px}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:8px}
+
+/* Section headers */
+.sec-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}
+.sec-line{flex:1;height:1px;background:var(--line-2)}
+
+/* Form */
+label.fl{font-size:11px;color:var(--ink-3);display:block;margin-bottom:3px}
+.field{margin-bottom:8px}
+.field:last-child{margin-bottom:0}
+input[type=text],textarea,select{width:100%;font-size:12px;font-family:var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper-2);color:var(--ink);outline:none;transition:border-color .15s;appearance:none}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px rgba(26,25,22,.06);background:var(--paper)}
+input::placeholder,textarea::placeholder{color:var(--ink-4)}
+textarea{resize:vertical;line-height:1.5;min-height:50px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a8880' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+/* Templates */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tpl-btn{font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 9px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper-2);color:var(--ink-2);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:5px}
+.tpl-btn:hover{background:var(--paper);border-color:var(--ink-3);color:var(--ink)}
+.tpl-icon{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.tpl-btn.cli .tpl-icon{background:#e8e0f5;color:#5e3ab7}
+.tpl-btn.lib .tpl-icon{background:#d5edf4;color:#1a6f8a}
+.tpl-btn.webapp .tpl-icon{background:#fce4d2;color:#b84c1a}
+.tpl-btn.api .tpl-icon{background:#d5ecd8;color:#1f7033}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);cursor:pointer;background:var(--paper-2);color:var(--ink-3);transition:all .15s;user-select:none;font-family:var(--sans)}
+.chip:hover{border-color:var(--ink-3);color:var(--ink-2)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* Checkboxes */
+.checks{display:flex;flex-direction:column;gap:1px}
+.check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);cursor:pointer;user-select:none;padding:4px 7px;border-radius:var(--radius-sm);transition:background .12s}
+.check:hover{background:var(--paper-2)}
+.check input[type=checkbox]{display:none}
+.check-box{width:14px;height:14px;border:1px solid var(--line);border-radius:4px;background:var(--paper-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.check input:checked~.check-box{background:var(--ink);border-color:var(--ink)}
+.check-box svg{display:none}
+.check input:checked~.check-box svg{display:block}
+.check-lbl{font-size:12px;color:var(--ink-2)}
+.check input:checked~.check-lbl{color:var(--ink);font-weight:500}
+
+/* Buttons */
+.btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--line);cursor:pointer;color:var(--ink-2);background:var(--paper);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--paper-2);border-color:var(--ink-3);color:var(--ink)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:var(--ink-2);border-color:var(--ink-2)}
+.btn.sm{font-size:11px;padding:5px 10px}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-3)}
+.btn.ghost:hover{background:var(--paper-2);color:var(--ink)}
+
+/* Right panel */
+.right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
+.output-bar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:44px;border-bottom:1px solid var(--line);flex-shrink:0}
+.tabs{display:flex;gap:2px}
+.tab{font-family:var(--sans);font-size:12px;padding:4px 10px;border:none;background:none;cursor:pointer;color:var(--ink-3);border-radius:var(--radius-sm);transition:all .15s}
+.tab:hover{color:var(--ink-2);background:var(--paper-2)}
+.tab.active{color:var(--ink);font-weight:500;background:var(--paper-2)}
+.output-actions{display:flex;gap:5px;align-items:center}
+.notif{font-size:11px;color:var(--green);background:var(--green-dim);padding:3px 9px;border-radius:99px;display:none;align-items:center;gap:4px;font-weight:500}
+.notif.show{display:flex}
+
+/* Preview */
+.preview-scroll{flex:1;overflow-y:auto;padding:24px 30px}
+.preview-scroll::-webkit-scrollbar{width:4px}
+.preview-scroll::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:99px}
+.preview-area{max-width:700px;margin:0 auto;font-size:13.5px;line-height:1.7;color:var(--ink)}
+.preview-area h1{font-family:var(--serif);font-size:26px;font-weight:500;font-style:italic;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.preview-area h2{font-family:var(--serif);font-size:17px;font-weight:400;font-style:italic;margin:20px 0 6px}
+.preview-area h3{font-size:11px;font-weight:500;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.preview-area p{margin-bottom:9px;color:var(--ink-2);font-size:13px}
+.preview-area code{font-family:var(--mono);font-size:11px;background:var(--paper-2);border:1px solid var(--line);padding:1px 5px;border-radius:4px;color:var(--accent)}
+.preview-area pre{background:var(--ink);border-radius:var(--radius);padding:14px 16px;font-family:var(--mono);font-size:11.5px;overflow-x:auto;margin-bottom:12px;line-height:1.6}
+.preview-area pre code{background:none;border:none;padding:0;color:#c9d1d9;font-size:11.5px}
+.preview-area ul,.preview-area ol{padding-left:18px;margin-bottom:9px;color:var(--ink-2);font-size:13px}
+.preview-area li{margin-bottom:3px}
+.preview-area img{display:inline-block;height:18px;margin-right:3px;vertical-align:middle}
+.preview-area a{color:var(--accent);text-decoration:none}
+.preview-area a:hover{text-decoration:underline}
+.preview-area blockquote{border-left:3px solid var(--accent);padding:5px 12px;margin:0 0 10px;color:var(--ink-2);font-style:italic;background:var(--accent-dim);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.preview-area table{border-collapse:collapse;width:100%;font-size:12px;margin-bottom:12px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.preview-area td,.preview-area th{padding:6px 10px;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
+.preview-area tr:last-child td{border-bottom:none}
+.raw-area{max-width:700px;margin:0 auto;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--ink-2);line-height:1.7}
+
+/* Status bar */
+.status-bar{display:flex;align-items:center;gap:4px;padding:7px 16px;border-top:1px solid var(--line);flex-shrink:0}
+.stat{font-size:10.5px;color:var(--ink-4)}
+.stat strong{color:var(--ink-3);font-weight:500}
+.dot{width:3px;height:3px;border-radius:50%;background:var(--line);flex-shrink:0}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--paper-3);flex-shrink:0;transition:background .3s;margin-right:5px}
+.status-dot.live{background:var(--green)}
+hr.div{border:none;border-top:1px solid var(--line-2)}
+
+/* Side tabs */
+.view-tab{font-size:12px;padding:8px 0;border:none;background:none;cursor:pointer;color:var(--ink-3);font-family:var(--sans);flex:1}
+.view-tab.active{color:var(--ink);font-weight:500;background:var(--paper-2)}
+
+/* Edit panel */
+.edit-panel{display:none;flex:1;overflow-y:auto;padding:16px 14px;flex-direction:column;gap:10px}
+.edit-panel.show{display:flex}
+.edit-section{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
+.edit-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper-2);cursor:pointer;user-select:none;font-size:12px;font-weight:500;color:var(--ink-2)}
+.edit-section-hdr:hover{background:var(--paper-3)}
+.edit-section-hdr .chevron{font-size:9px;color:var(--ink-4);transition:transform .2s;display:inline-block}
+.edit-section-body{display:none;padding:10px;background:var(--paper);border-top:1px solid var(--line)}
+.edit-section-body.show{display:block}
+.edit-hint{font-size:10.5px;color:var(--ink-4);margin-bottom:6px;line-height:1.4}
+.edit-ta{width:100%;font-family:var(--mono);font-size:11.5px;padding:7px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper-2);color:var(--ink);outline:none;resize:vertical;line-height:1.55;min-height:80px;max-height:300px;box-sizing:border-box;transition:border-color .15s}
+.edit-ta:focus{border-color:var(--ink-3);background:var(--paper)}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="2" rx="1"/><rect x="11" y="11" width="2" height="2" rx=".5"/></svg>
+    </div>
+    README Generator
+  </div>
+  <span class="char-pill" id="char-count">0 chars</span>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div style="display:flex;border-bottom:1px solid var(--line);background:var(--paper)">
+      <button class="view-tab active" id="vtab-config" onclick="switchSideTab('config')">Settings</button>
+      <button class="view-tab" id="vtab-edit" onclick="switchSideTab('edit')">Edit sections</button>
+    </div>
+
+    <!-- Settings tab -->
+    <div class="sidebar-scroll" id="side-config">
+      <div>
+        <div class="sec-hdr"><span class="sec-lbl">Templates</span><div class="sec-line"></div></div>
+      <div class="tpl-grid">
+  <button class="tpl-btn cli" onclick="applyTemplate('cli')">
+    <span class="tpl-icon">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
+        <path d="M2.5 4L5 6L2.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 8h3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    CLI tool
+  </button>
+
+  <button class="tpl-btn lib" onclick="applyTemplate('lib')">
+    <span class="tpl-icon">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="2" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+        <rect x="3.5" y="0.5" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1" fill="var(--bg2, #f3f1ec)"/>
+        <path d="M5.5 3.5h3M5.5 5.5h3M5.5 7.5h1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </span>
+    Library
+  </button>
+
+  <button class="tpl-btn webapp" onclick="applyTemplate('webapp')">
+    <span class="tpl-icon">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="1.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+        <path d="M0.5 4h11" stroke="currentColor" stroke-width="1"/>
+        <circle cx="2.5" cy="2.75" r="0.6" fill="currentColor"/>
+        <circle cx="4.5" cy="2.75" r="0.6" fill="currentColor"/>
+        <circle cx="6.5" cy="2.75" r="0.6" fill="currentColor"/>
+        <path d="M3 7h2.5M3 8.5h5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </span>
+    Web app
+  </button>
+
+  <button class="tpl-btn api" onclick="applyTemplate('api')">
+    <span class="tpl-icon">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 4.5h10M1 7.5h10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+        <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
+        <path d="M4.5 4.5v3M7.5 4.5v3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </span>
+    REST API
+  </button>
+</div>
+      </div>
+      <hr class="div"/>
+      <div>
+        <div class="sec-hdr"><span class="sec-lbl">Basics</span><div class="sec-line"></div></div>
+        <div class="field"><label class="fl">Project name</label><input type="text" id="proj-name" placeholder="my-awesome-project"/></div>
+        <div class="field"><label class="fl">Tagline</label><input type="text" id="proj-desc" placeholder="A tool that does X really well"/></div>
+        <div class="two">
+          <div class="field"><label class="fl">GitHub username</label><input type="text" id="author" placeholder="yourusername"/></div>
+          <div class="field"><label class="fl">License</label>
+            <select id="license-type">
+              <option>MIT</option><option>Apache-2.0</option><option>GPL-3.0</option>
+              <option>BSD-2-Clause</option><option>ISC</option><option>Unlicense</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label class="fl">Install command</label><input type="text" id="install-cmd" placeholder="npm install my-package"/></div>
+        <div class="field"><label class="fl">Demo URL <span style="color:var(--ink-4)">(optional)</span></label><input type="text" id="demo-url" placeholder="https://my-project.vercel.app"/></div>
+      </div>
+      <hr class="div"/>
+      <div>
+        <div class="sec-hdr"><span class="sec-lbl">Badges</span><div class="sec-line"></div></div>
+        <div class="chips" id="badge-row">
+          <button class="chip on" data-badge="license">License</button>
+          <button class="chip on" data-badge="stars">Stars</button>
+          <button class="chip" data-badge="issues">Issues</button>
+          <button class="chip" data-badge="forks">Forks</button>
+          <button class="chip" data-badge="npm">npm</button>
+          <button class="chip" data-badge="ci">CI</button>
+          <button class="chip" data-badge="coverage">Coverage</button>
+          <button class="chip" data-badge="version">Version</button>
+          <button class="chip" data-badge="downloads">Downloads</button>
+          <button class="chip" data-badge="prs">PRs welcome</button>
+        </div>
+      </div>
+      <hr class="div"/>
+      <div>
+        <div class="sec-hdr"><span class="sec-lbl">Tech stack</span><div class="sec-line"></div></div>
+        <div class="chips" id="tech-grid">
+          <button class="chip" data-tech="React">React</button>
+          <button class="chip" data-tech="TypeScript">TypeScript</button>
+          <button class="chip" data-tech="Node.js">Node.js</button>
+          <button class="chip" data-tech="Python">Python</button>
+          <button class="chip" data-tech="Go">Go</button>
+          <button class="chip" data-tech="Rust">Rust</button>
+          <button class="chip" data-tech="Docker">Docker</button>
+          <button class="chip" data-tech="PostgreSQL">PostgreSQL</button>
+          <button class="chip" data-tech="MongoDB">MongoDB</button>
+          <button class="chip" data-tech="Redis">Redis</button>
+          <button class="chip" data-tech="GraphQL">GraphQL</button>
+          <button class="chip" data-tech="Tailwind">Tailwind</button>
+          <button class="chip" data-tech="Next.js">Next.js</button>
+          <button class="chip" data-tech="Bun">Bun</button>
+          <button class="chip" data-tech="Deno">Deno</button>
+        </div>
+        <div class="field" style="margin-top:8px"><input type="text" id="custom-tech" placeholder="Custom stack, comma separated"/></div>
+      </div>
+      <hr class="div"/>
+      <div>
+        <div class="sec-hdr"><span class="sec-lbl">Sections</span><div class="sec-line"></div></div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="sec-features" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Features</span></label>
+          <label class="check"><input type="checkbox" id="sec-install" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Installation</span></label>
+          <label class="check"><input type="checkbox" id="sec-usage" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Usage</span></label>
+          <label class="check"><input type="checkbox" id="sec-api"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">API reference</span></label>
+          <label class="check"><input type="checkbox" id="sec-config"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Configuration</span></label>
+          <label class="check"><input type="checkbox" id="sec-env"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Environment variables</span></label>
+          <label class="check"><input type="checkbox" id="sec-docker"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Docker setup</span></label>
+          <label class="check"><input type="checkbox" id="sec-contributing" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Contributing</span></label>
+          <label class="check"><input type="checkbox" id="sec-license" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">License</span></label>
+          <label class="check"><input type="checkbox" id="sec-roadmap"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Roadmap</span></label>
+          <label class="check"><input type="checkbox" id="sec-acknowledgements"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Acknowledgements</span></label>
+          <label class="check"><input type="checkbox" id="sec-faq"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">FAQ</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit sections tab -->
+    <div class="edit-panel" id="side-edit">
+      <p style="font-size:11.5px;color:var(--ink-4);padding:4px 2px 6px;line-height:1.5">Edit the content for each section. Changes reflect instantly in the preview.</p>
+      <div id="edit-sections-list"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn primary" onclick="generateReadme()" style="flex:1">Generate README</button>
+      <button class="btn ghost sm" onclick="resetForm()">Reset</button>
+    </div>
+  </aside>
+
+  <!-- Right panel -->
+  <div class="right">
+    <div class="output-bar">
+      <div class="tabs">
+        <button class="tab active" id="tab-preview" onclick="switchTab('preview')">Rendered</button>
+        <button class="tab" id="tab-raw" onclick="switchTab('raw')">Markdown</button>
+      </div>
+      <div class="output-actions">
+        <span class="notif" id="copy-notif">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Copied!
+        </span>
+        <button class="btn sm" onclick="copyMarkdown()">Copy markdown</button>
+        <button class="btn sm primary" onclick="downloadReadme()">Download README.md</button>
+      </div>
+    </div>
+    <div class="preview-scroll">
+      <div id="preview-content" class="preview-area"></div>
+      <div id="raw-content" class="raw-area" style="display:none"></div>
+    </div>
+    <div class="status-bar">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="stat"><strong id="stat-words">0</strong> words</span>
+      <span class="dot"></span>
+      <span class="stat"><strong id="stat-sections">0</strong> sections</span>
+      <span class="dot"></span>
+      <span class="stat"><strong id="stat-chars">0</strong> chars</span>
+    </div>
+  </div>
+</div>
+
+<script src="script.js">
+</script>
+</body>
+</html>
