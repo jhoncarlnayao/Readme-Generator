@@ -16,6 +16,24 @@ const badgeUrls = {
   prs:       ()     => `[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)`,
 };
 
+const techBadgeMap = {
+  "React": "react",
+  "TypeScript": "typescript",
+  "Node.js": "node.js",
+  "Python": "python",
+  "Go": "go",
+  "Rust": "rust",
+  "Docker": "docker",
+  "PostgreSQL": "postgresql",
+  "MongoDB": "mongodb",
+  "Redis": "redis",
+  "GraphQL": "graphql",
+  "Tailwind": "tailwindcss",
+  "Next.js": "next.js",
+  "Bun": "bun",
+  "Deno": "deno",
+};
+
 const templates = {
   cli:    { name:'my-cli-tool',  desc:'A fast, ergonomic command-line tool for developers',     cmd:'npm install -g my-cli-tool',  techs:['Node.js','TypeScript'],          sections:{features:true,install:true,usage:true,config:true,license:true,contributing:true} },
   lib:    { name:'my-lib',       desc:'A lightweight, zero-dependency utility library',          cmd:'npm install my-lib',           techs:['TypeScript'],                    sections:{features:true,install:true,usage:true,api:true,license:true,contributing:true} },
@@ -29,7 +47,7 @@ const sectionDefaults = {
   usage:           ``,
   api:             `### \`run(options)\`\n\nStarts the process with the given options.\n\n| Param | Type | Default | Description |\n|-------|------|---------|-------------|\n| \`options.timeout\` | \`number\` | \`5000\` | Max wait time in ms |\n| \`options.verbose\` | \`boolean\` | \`false\` | Enable debug logging |\n\n**Returns:** \`Promise<r>\``,
   config:          `Create a \`.projectrc.json\` file in your project root:\n\n\`\`\`json\n{\n  "option": "value",\n  "enabled": true,\n  "timeout": 5000\n}\n\`\`\``,
-  env:             `Copy \`.env.example\` to \`.env\` and fill in the values:\n\n\`\`\`bash\nAPP_PORT=3000\nDATABASE_URL=postgres://localhost:5432/mydb\nSECRET_KEY=your-secret-key\n\`\`\``,
+  env:             `Copy \`.env.example\` to \`.env\` and fill in the values:\n\`\`\`bash\nAPP_PORT=3000\nDATABASE_URL=postgres://localhost:5432/mydb\nSECRET_KEY=your-secret-key\n\`\`\``,
   docker:          `\`\`\`bash\n# Build and start containers\ndocker compose up -d\n\n# Run migrations\ndocker compose exec app npm run migrate\n\`\`\``,
   contributing:    `Contributions are welcome — thank you for helping make this better!\n\n1. Fork the repository\n2. Create your feature branch: \`git checkout -b feat/my-feature\`\n3. Commit your changes: \`git commit -m 'feat: add my feature'\`\n4. Push to the branch: \`git push origin feat/my-feature\`\n5. Open a pull request\n\nPlease read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct.`,
   license:         ``,
@@ -171,7 +189,9 @@ function countSections(md) { return (md.match(/^## /gm) || []).length; }
 function countWords(md) { return md.replace(/```[\s\S]*?```/g, '').trim().split(/\s+/).filter(Boolean).length; }
 
 function buildMarkdown() {
-  const name       = document.getElementById('proj-name').value.trim()   || 'my-project';
+const rawName = document.getElementById('proj-name').value.trim() || 'my-project';
+const name = rawName; // for display
+const repo = toRepoName(rawName); // for URLs
   const desc       = document.getElementById('proj-desc').value.trim()   || 'A description of your project.';
   const author     = document.getElementById('author').value.trim()      || 'yourusername';
   const installCmd = document.getElementById('install-cmd').value.trim() || `npm install ${name}`;
@@ -186,7 +206,10 @@ function buildMarkdown() {
   md += `> ${desc}\n\n`;
   if (demoUrl) md += `[Live demo](${demoUrl}) · [Report bug](https://github.com/${author}/${name}/issues) · [Request feature](https://github.com/${author}/${name}/issues)\n\n`;
   else         md += `[Report bug](https://github.com/${author}/${name}/issues) · [Request feature](https://github.com/${author}/${name}/issues)\n\n`;
-  if (techs.length) md += `## Built with\n\n${techs.map(t => `- ${t}`).join('\n')}\n\n`;
+if (techs.length) {
+  md += `## Built with\n\n`;
+  md += generateTechBadges(techs) + '\n\n';
+}
 
   if (g('sec-features')) {
     const c = getContent('features');
@@ -240,22 +263,56 @@ function buildMarkdown() {
 }
 
 function markdownToHtml(md) {
-  return md
-    .replace(/^# (.+)$/gm,  '<h1>$1</h1>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, (_, l, code) => `<pre><code>${escHtml(code.trim())}</code></pre>`)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\[!\[([^\]]+)\]\(([^)]+)\)\]\(([^)]+)\)/g, '<a href="$3"><img src="$2" alt="$1"/></a>')
+  // Protect code blocks first — replace with placeholders so inner content isn't processed
+  const codeBlocks = [];
+  md = md.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<pre><code>${escHtml(code.trim())}</code></pre>`);
+    return `%%CODEBLOCK_${idx}%%`;
+  });
+
+  // Protect inline code
+  const inlineCodes = [];
+  md = md.replace(/`([^`]+)`/g, (_, code) => {
+    const idx = inlineCodes.length;
+    inlineCodes.push(`<code>${escHtml(code)}</code>`);
+    return `%%INLINECODE_${idx}%%`;
+  });
+
+  md = md
+    // Headings
+    .replace(/^# (.+)$/gm,   '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+
+    // *** BADGES FIRST *** — linked images [![alt](img)](url) must come before plain links
+    .replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, '<a href="$3"><img src="$2" alt="$1"/></a>')
+
+    // Plain images ![alt](url)
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1"/>')
+
+    // Plain links [text](url) — AFTER images
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+
+    // Bold
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+
+    // Blockquote
     .replace(/^\> (.+)$/gm, '<blockquote>$1</blockquote>')
+
+    // Checkboxes
     .replace(/^\- \[x\] (.+)$/gm, '<li style="list-style:none">✓ <s>$1</s></li>')
     .replace(/^\- \[ \] (.+)$/gm, '<li style="list-style:none">&#9633; $1</li>')
+
+    // List items
     .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
     .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+
+    // Wrap consecutive <li> into <ul>
+    .replace(/(<li[^>]*>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
     .replace(/(<\/ul>\s*<ul>)/g, '')
+
+    // Tables
     .replace(/\|(.+)\|/g, m => {
       const cells = m.split('|').filter(c => c.trim() !== '');
       if (cells.every(c => /^[-: ]+$/.test(c))) return '';
@@ -263,9 +320,17 @@ function markdownToHtml(md) {
     })
     .replace(/(<tr>[\s\S]*?<\/tr>)/g, m => `<table>${m}</table>`)
     .replace(/(<\/table>\s*<table[^>]*>)/g, '')
-    .replace(/^(?!<[hbuptlosr])(.*\S.*)$/gm, '<p>$1</p>')
+
+    // Paragraphs — lines not starting with an HTML tag
+    .replace(/^(?!<[hbuptlosr%])(.*\S.*)$/gm, '<p>$1</p>')
     .replace(/<p><\/p>/g, '')
     .replace(/\n{2,}/g, '');
+
+  // Restore code blocks and inline code
+  codeBlocks.forEach((block, i) => { md = md.replace(`%%CODEBLOCK_${i}%%`, block); });
+  inlineCodes.forEach((code, i) => { md = md.replace(`%%INLINECODE_${i}%%`, code); });
+
+  return md;
 }
 
 function generateReadme() {
@@ -280,6 +345,17 @@ function generateReadme() {
   document.getElementById('status-dot').className = 'status-dot' + (chars > 100 ? ' live' : '');
   if (currentTab === 'preview') document.getElementById('preview-content').innerHTML = markdownToHtml(generatedMarkdown);
   else document.getElementById('raw-content').textContent = generatedMarkdown;
+}
+
+function generateTechBadges(techs) {
+  return techs.map(t => {
+    const key = techBadgeMap[t] || t.toLowerCase().replace(/\s+/g, '-');
+    return `![${t}](https://img.shields.io/badge/-${encodeURIComponent(t)}-black?style=flat&logo=${key})`;
+  }).join(' ');
+}
+
+function toRepoName(name) {
+  return name.trim().replace(/\s+/g, '-');
 }
 
 function switchTab(tab) {

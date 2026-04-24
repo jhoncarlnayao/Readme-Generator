@@ -1,16 +1,14 @@
-# README Generator
+# README-Generator
 
-[![License](https://img.shields.io/github/license/jhoncarlnayao/README Generator)](LICENSE) [![Stars](https://img.shields.io/github/stars/jhoncarlnayao/README Generator?style=social)](https://github.com/jhoncarlnayao/README Generator) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Stars](https://img.shields.io/github/stars/jhoncarlnayao/README-Generator?style=social)](https://github.com/jhoncarlnayao/README-Generator) [![Downloads](https://img.shields.io/github/downloads/jhoncarlnayao/README-Generator/total)](https://github.com/jhoncarlnayao/README-Generator/releases)
 
-> A simple and efficient README generator with live preview
+> built for developers who want quick and clean project documentation.
 
-[Report bug](https://github.com/jhoncarlnayao/README Generator/issues) · [Request feature](https://github.com/jhoncarlnayao/README Generator/issues)
+[Live demo](readme-generator-mu.vercel.app) · [Report bug](https://github.com/jhoncarlnayao/README-Generator/issues) · [Request feature](https://github.com/jhoncarlnayao/README-Generator/issues)
 
 ## Built with
 
-- Javascript
-- HTML
-- CSS
+![HTML5](https://img.shields.io/badge/-HTML5-black?style=flat&logo=html5) ![CSS](https://img.shields.io/badge/-CSS-black?style=flat&logo=css) ![JAVASCRIPT](https://img.shields.io/badge/-JAVASCRIPT-black?style=flat&logo=javascript) ![FIGMA](https://img.shields.io/badge/-FIGMA-black?style=flat&logo=figma)
 
 ## Features
 
@@ -19,6 +17,12 @@ Simple Interface — Clean and intuitive UI for quickly creating professional do
 Customizable Sections — Easily add, edit, or remove README parts like title, description, features, and more
 Live Preview — See your README output in real time as you type
 Export Ready — Copy or download your generated README instantly for GitHub use
+
+## Installation
+
+```bash
+git clone https://github.com/jhoncarlnayao/Readme-Generator.git
+```
 
 ## FAQ
 
@@ -32,5 +36,4 @@ Q: Does it save my data?
 A: No, everything runs locally in your browser for privacy and speed.
 
 Q: Is it mobile friendly?
-A: Yes, the interface is responsive and works on both desktop and mobile devices.
-
+A: Erm no
