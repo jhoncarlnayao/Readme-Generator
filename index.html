@@ -2,349 +2,828 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Readme</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1"/>
+<title>README Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="icon" type="image/png" href="icon.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#1a1916;--ink-2:#4a4843;--ink-3:#8a8880;--ink-4:#b8b5af;
-  --paper:#faf9f6;--paper-2:#f3f1ec;--paper-3:#e8e5de;
-  --line:rgba(26,25,22,.1);--line-2:rgba(26,25,22,.06);
-  --accent:#c9622a;--accent-dim:#f0ddd3;--green:#2a7a4b;--green-dim:#d2ead9;
-  --radius:10px;--radius-sm:6px;
+  --page:#eceae6;
+  --panel:#ffffff;
+  --panel-2:#f6f5f2;
+  --panel-3:#eeece7;
+  --ink:#191815;
+  --ink-2:#5c5a54;
+  --ink-3:#93908a;
+  --ink-4:#c2beb5;
+  --line:rgba(25,24,21,.09);
+  --line-2:rgba(25,24,21,.06);
+  --accent:#ee6c2c;
+  --accent-2:#d85a1e;
+  --accent-soft:#fce4d4;
+  --accent-soft-2:#fbd8bf;
+  --green:#2a7a4b;
+  --green-dim:#dcefe2;
+  --radius-lg:20px;
+  --radius:12px;
+  --radius-sm:8px;
   --sans:'DM Sans',system-ui,sans-serif;
-  --serif:'Fraunces',Georgia,serif;
+  --display:'Space Grotesk',var(--sans);
   --mono:'DM Mono','Fira Code',monospace;
+  --shell-max:1360px;
 }
-html,body{height:100%;background:var(--paper-2)}
-body{font-family:var(--sans);font-size:13px;color:var(--ink);display:flex;flex-direction:column;min-height:100vh}
+html,body{height:100%}
+body{
+  font-family:var(--sans);font-size:13px;color:var(--ink);
+  background:
+    radial-gradient(circle at 1px 1px, rgba(25,24,21,.07) 1px, transparent 0) 0 0/16px 16px,
+    var(--page);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px 20px;
+}
+
+/* Outer shell — floating card, like the reference screenshot */
+.shell{
+  width:100%;max-width:var(--shell-max);
+  background:var(--panel);
+  border-radius:var(--radius-lg);
+  box-shadow:0 1px 2px rgba(25,24,21,.04), 0 24px 48px -20px rgba(25,24,21,.22), 0 0 0 1px rgba(25,24,21,.05);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  max-height:calc(100vh - 56px);
+}
 
 /* Top bar */
-.top-bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:48px;background:var(--paper);border-bottom:1px solid var(--line);flex-shrink:0}
-.logo{font-family:var(--serif);font-size:16px;font-weight:400;font-style:italic;display:flex;align-items:center;gap:8px}
-.logo-mark{width:26px;height:26px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center}
-.logo-mark svg{width:13px;height:13px;fill:var(--paper)}
-.char-pill{font-size:10.5px;color:var(--ink-4);background:var(--paper-2);border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-family:var(--mono)}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0;gap:10px}
+.logo{font-family:var(--display);font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(238,108,44,.35)}
+.logo-mark svg{width:15px;height:15px;fill:#fff}
+.top-right{display:flex;align-items:center;gap:8px}
+.char-pill{font-size:10.5px;color:var(--ink-3);background:var(--panel-2);border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-family:var(--mono);white-space:nowrap}
+.menu-btn{display:none;width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--panel-2);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.menu-btn svg{width:16px;height:16px;stroke:var(--ink-2)}
 
 /* Layout */
-.main{display:flex;flex:1;height:calc(100vh - 48px);overflow:hidden}
+.main{display:flex;flex:1;min-height:0;overflow:hidden}
 
 /* Sidebar */
-.sidebar{width:280px;flex-shrink:0;background:var(--paper);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-scroll{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:16px}
-.sidebar-scroll::-webkit-scrollbar{width:3px}
-.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:99px}
-.sidebar-footer{padding:12px 14px;border-top:1px solid var(--line);display:flex;gap:8px}
+.sidebar{width:300px;flex-shrink:0;background:var(--panel-2);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;transition:transform .25s ease}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:18px}
+.sidebar-scroll::-webkit-scrollbar{width:4px}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--ink-4);border-radius:99px}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--panel-2);flex-shrink:0}
 
-/* Section headers */
-.sec-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}
-.sec-line{flex:1;height:1px;background:var(--line-2)}
+/* Step-style section headers (nods to the numbered-step reference UI) */
+.sec-hdr{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.sec-num{width:19px;height:19px;border-radius:6px;background:var(--panel-3);border:1px solid var(--line);color:var(--ink-3);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-lbl{font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--ink-2)}
+.sec-line{flex:1;height:1px;background:var(--line)}
 
 /* Form */
-label.fl{font-size:11px;color:var(--ink-3);display:block;margin-bottom:3px}
-.field{margin-bottom:8px}
+label.fl{font-size:11px;color:var(--ink-3);display:block;margin-bottom:4px;font-weight:500}
+.field{margin-bottom:9px}
 .field:last-child{margin-bottom:0}
-input[type=text],textarea,select{width:100%;font-size:12px;font-family:var(--sans);padding:6px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper-2);color:var(--ink);outline:none;transition:border-color .15s;appearance:none}
-input[type=text]:focus,textarea:focus,select:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px rgba(26,25,22,.06);background:var(--paper)}
+input[type=text],textarea,select{width:100%;font-size:12.5px;font-family:var(--sans);padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;appearance:none}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 input::placeholder,textarea::placeholder{color:var(--ink-4)}
-textarea{resize:vertical;line-height:1.5;min-height:50px}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a8880' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+textarea{resize:vertical;line-height:1.5;min-height:52px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2393908a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:26px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 
 /* Templates */
-.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.tpl-btn{font-family:var(--sans);font-size:11px;font-weight:500;padding:6px 9px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper-2);color:var(--ink-2);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:5px}
-.tpl-btn:hover{background:var(--paper);border-color:var(--ink-3);color:var(--ink)}
-.tpl-icon{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tpl-btn{font-family:var(--sans);font-size:11.5px;font-weight:600;padding:9px 10px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--panel);color:var(--ink-2);cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:6px}
+.tpl-btn:hover{border-color:var(--accent);color:var(--ink);box-shadow:0 0 0 3px var(--accent-soft)}
+.tpl-btn:active{transform:scale(.98)}
+.tpl-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
 .tpl-btn.cli .tpl-icon{background:#e8e0f5;color:#5e3ab7}
 .tpl-btn.lib .tpl-icon{background:#d5edf4;color:#1a6f8a}
-.tpl-btn.webapp .tpl-icon{background:#fce4d2;color:#b84c1a}
+.tpl-btn.webapp .tpl-icon{background:var(--accent-soft);color:var(--accent-2)}
 .tpl-btn.api .tpl-icon{background:#d5ecd8;color:#1f7033}
 
 /* Chips */
-.chips{display:flex;flex-wrap:wrap;gap:4px}
-.chip{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);cursor:pointer;background:var(--paper-2);color:var(--ink-3);transition:all .15s;user-select:none;font-family:var(--sans)}
-.chip:hover{border-color:var(--ink-3);color:var(--ink-2)}
-.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;font-weight:500;padding:5px 10px;border-radius:999px;border:1px solid var(--line);cursor:pointer;background:var(--panel);color:var(--ink-3);transition:all .15s;user-select:none;font-family:var(--sans)}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 6px rgba(238,108,44,.3)}
 
 /* Checkboxes */
 .checks{display:flex;flex-direction:column;gap:1px}
-.check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);cursor:pointer;user-select:none;padding:4px 7px;border-radius:var(--radius-sm);transition:background .12s}
-.check:hover{background:var(--paper-2)}
+.check{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-2);cursor:pointer;user-select:none;padding:6px 8px;border-radius:var(--radius-sm);transition:background .12s}
+.check:hover{background:var(--panel-3)}
 .check input[type=checkbox]{display:none}
-.check-box{width:14px;height:14px;border:1px solid var(--line);border-radius:4px;background:var(--paper-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.check input:checked~.check-box{background:var(--ink);border-color:var(--ink)}
+.check-box{width:15px;height:15px;border:1.5px solid var(--line);border-radius:5px;background:var(--panel);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.check input:checked~.check-box{background:var(--accent);border-color:var(--accent)}
 .check-box svg{display:none}
 .check input:checked~.check-box svg{display:block}
-.check-lbl{font-size:12px;color:var(--ink-2)}
-.check input:checked~.check-lbl{color:var(--ink);font-weight:500}
+.check-lbl{font-size:12.5px;color:var(--ink-2)}
+.check input:checked~.check-lbl{color:var(--ink);font-weight:600}
 
 /* Buttons */
-.btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--line);cursor:pointer;color:var(--ink-2);background:var(--paper);transition:all .15s;white-space:nowrap}
-.btn:hover{background:var(--paper-2);border-color:var(--ink-3);color:var(--ink)}
+.btn{font-family:var(--sans);font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:var(--radius-sm);border:1px solid var(--line);cursor:pointer;color:var(--ink-2);background:var(--panel);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--panel-3);border-color:var(--ink-4);color:var(--ink)}
 .btn:active{transform:scale(.98)}
-.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.btn.primary:hover{background:var(--ink-2);border-color:var(--ink-2)}
-.btn.sm{font-size:11px;padding:5px 10px}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 10px rgba(238,108,44,.3)}
+.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn.sm{font-size:11.5px;padding:7px 12px}
 .btn.ghost{border-color:transparent;background:transparent;color:var(--ink-3)}
-.btn.ghost:hover{background:var(--paper-2);color:var(--ink)}
+.btn.ghost:hover{background:var(--panel-3);color:var(--ink)}
 
 /* Right panel */
-.right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
-.output-bar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:44px;border-bottom:1px solid var(--line);flex-shrink:0}
-.tabs{display:flex;gap:2px}
-.tab{font-family:var(--sans);font-size:12px;padding:4px 10px;border:none;background:none;cursor:pointer;color:var(--ink-3);border-radius:var(--radius-sm);transition:all .15s}
-.tab:hover{color:var(--ink-2);background:var(--paper-2)}
-.tab.active{color:var(--ink);font-weight:500;background:var(--paper-2)}
-.output-actions{display:flex;gap:5px;align-items:center}
-.notif{font-size:11px;color:var(--green);background:var(--green-dim);padding:3px 9px;border-radius:99px;display:none;align-items:center;gap:4px;font-weight:500}
+.right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--panel);min-width:0}
+.output-bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--line);flex-shrink:0;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:2px;background:var(--panel-2);padding:3px;border-radius:99px;border:1px solid var(--line)}
+.tab{font-family:var(--sans);font-size:12px;font-weight:600;padding:6px 14px;border:none;background:none;cursor:pointer;color:var(--ink-3);border-radius:99px;transition:all .15s}
+.tab:hover{color:var(--ink)}
+.tab.active{color:#fff;background:var(--ink)}
+.output-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.notif{font-size:11px;color:var(--green);background:var(--green-dim);padding:4px 10px;border-radius:99px;display:none;align-items:center;gap:4px;font-weight:600}
 .notif.show{display:flex}
 
 /* Preview */
-.preview-scroll{flex:1;overflow-y:auto;padding:24px 30px}
-.preview-scroll::-webkit-scrollbar{width:4px}
-.preview-scroll::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:99px}
-.preview-area{max-width:700px;margin:0 auto;font-size:13.5px;line-height:1.7;color:var(--ink)}
-.preview-area h1{font-family:var(--serif);font-size:26px;font-weight:500;font-style:italic;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:12px}
-.preview-area h2{font-family:var(--serif);font-size:17px;font-weight:400;font-style:italic;margin:20px 0 6px}
-.preview-area h3{font-size:11px;font-weight:500;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.preview-scroll{flex:1;overflow-y:auto;padding:30px 34px;position:relative}
+.preview-scroll::-webkit-scrollbar{width:5px}
+.preview-scroll::-webkit-scrollbar-thumb{background:var(--ink-4);border-radius:99px}
+.preview-area{max-width:720px;margin:0 auto;font-size:13.5px;line-height:1.7;color:var(--ink);position:relative;z-index:1}
+.preview-area h1{font-family:var(--display);font-size:28px;font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.preview-area h2{font-family:var(--display);font-size:18px;font-weight:600;margin:22px 0 8px;letter-spacing:-.01em}
+.preview-area h3{font-size:11px;font-weight:700;margin:14px 0 5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2)}
 .preview-area p{margin-bottom:9px;color:var(--ink-2);font-size:13px}
-.preview-area code{font-family:var(--mono);font-size:11px;background:var(--paper-2);border:1px solid var(--line);padding:1px 5px;border-radius:4px;color:var(--accent)}
-.preview-area pre{background:var(--ink);border-radius:var(--radius);padding:14px 16px;font-family:var(--mono);font-size:11.5px;overflow-x:auto;margin-bottom:12px;line-height:1.6}
-.preview-area pre code{background:none;border:none;padding:0;color:#c9d1d9;font-size:11.5px}
-.preview-area ul,.preview-area ol{padding-left:18px;margin-bottom:9px;color:var(--ink-2);font-size:13px}
-.preview-area li{margin-bottom:3px}
-.preview-area img{display:inline-block;height:18px;margin-right:3px;vertical-align:middle}
-.preview-area a{color:var(--accent);text-decoration:none}
+.preview-area code{font-family:var(--mono);font-size:11.5px;background:var(--panel-3);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--accent-2)}
+.preview-area pre{background:var(--ink);border-radius:var(--radius);padding:16px 18px;font-family:var(--mono);font-size:11.5px;overflow-x:auto;margin-bottom:12px;line-height:1.6}
+.preview-area pre code{background:none;border:none;padding:0;color:#e8e6e1;font-size:11.5px}
+.preview-area ul,.preview-area ol{padding-left:20px;margin-bottom:9px;color:var(--ink-2);font-size:13px}
+.preview-area li{margin-bottom:4px}
+.preview-area img{display:inline-block;height:20px;margin:2px 3px 2px 0;vertical-align:middle}
+.preview-area a{color:var(--accent-2);text-decoration:none;font-weight:500}
 .preview-area a:hover{text-decoration:underline}
-.preview-area blockquote{border-left:3px solid var(--accent);padding:5px 12px;margin:0 0 10px;color:var(--ink-2);font-style:italic;background:var(--accent-dim);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.preview-area blockquote{border-left:3px solid var(--accent);padding:6px 14px;margin:0 0 10px;color:var(--ink-2);background:var(--accent-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
 .preview-area table{border-collapse:collapse;width:100%;font-size:12px;margin-bottom:12px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.preview-area td,.preview-area th{padding:6px 10px;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
+.preview-area td,.preview-area th{padding:7px 11px;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
 .preview-area tr:last-child td{border-bottom:none}
-.raw-area{max-width:700px;margin:0 auto;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--ink-2);line-height:1.7}
+.raw-area{max-width:720px;margin:0 auto;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--ink-2);line-height:1.7;position:relative;z-index:1}
+
+/* Decorative dotted texture, echoing the reference screenshot's corner accent */
+.dot-deco{position:absolute;right:18px;bottom:8px;width:200px;height:160px;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(circle, rgba(25,24,21,.14) 1.4px, transparent 1.4px);
+  background-size:12px 12px;
+  mask-image:radial-gradient(ellipse at bottom right, black 0%, transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at bottom right, black 0%, transparent 72%);
+}
 
 /* Status bar */
-.status-bar{display:flex;align-items:center;gap:4px;padding:7px 16px;border-top:1px solid var(--line);flex-shrink:0}
-.stat{font-size:10.5px;color:var(--ink-4)}
-.stat strong{color:var(--ink-3);font-weight:500}
-.dot{width:3px;height:3px;border-radius:50%;background:var(--line);flex-shrink:0}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--paper-3);flex-shrink:0;transition:background .3s;margin-right:5px}
+.status-bar{display:flex;align-items:center;gap:5px;padding:9px 20px;border-top:1px solid var(--line);flex-shrink:0;background:var(--panel-2);flex-wrap:wrap}
+.stat{font-size:10.5px;color:var(--ink-3)}
+.stat strong{color:var(--ink-2);font-weight:700}
+.dot{width:3px;height:3px;border-radius:50%;background:var(--ink-4);flex-shrink:0}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--ink-4);flex-shrink:0;transition:background .3s;margin-right:6px}
 .status-dot.live{background:var(--green)}
-hr.div{border:none;border-top:1px solid var(--line-2)}
+hr.div{border:none;border-top:1px solid var(--line)}
 
 /* Side tabs */
-.view-tab{font-size:12px;padding:8px 0;border:none;background:none;cursor:pointer;color:var(--ink-3);font-family:var(--sans);flex:1}
-.view-tab.active{color:var(--ink);font-weight:500;background:var(--paper-2)}
+.side-tabs-row{display:flex;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.view-tab{font-size:12px;font-weight:600;padding:11px 0;border:none;background:none;cursor:pointer;color:var(--ink-3);font-family:var(--sans);flex:1;border-bottom:2px solid transparent;transition:all .15s}
+.view-tab:hover{color:var(--ink-2)}
+.view-tab.active{color:var(--accent-2);border-bottom-color:var(--accent)}
 
 /* Edit panel */
-.edit-panel{display:none;flex:1;overflow-y:auto;padding:16px 14px;flex-direction:column;gap:10px}
+.edit-panel{display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:10px}
 .edit-panel.show{display:flex}
-.edit-section{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden}
-.edit-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper-2);cursor:pointer;user-select:none;font-size:12px;font-weight:500;color:var(--ink-2)}
-.edit-section-hdr:hover{background:var(--paper-3)}
+.edit-section{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--panel)}
+.edit-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--panel-2);cursor:pointer;user-select:none;font-size:12px;font-weight:600;color:var(--ink-2)}
+.edit-section-hdr:hover{background:var(--panel-3)}
 .edit-section-hdr .chevron{font-size:9px;color:var(--ink-4);transition:transform .2s;display:inline-block}
-.edit-section-body{display:none;padding:10px;background:var(--paper);border-top:1px solid var(--line)}
+.edit-section-body{display:none;padding:10px;background:var(--panel);border-top:1px solid var(--line)}
 .edit-section-body.show{display:block}
 .edit-hint{font-size:10.5px;color:var(--ink-4);margin-bottom:6px;line-height:1.4}
-.edit-ta{width:100%;font-family:var(--mono);font-size:11.5px;padding:7px 9px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper-2);color:var(--ink);outline:none;resize:vertical;line-height:1.55;min-height:80px;max-height:300px;box-sizing:border-box;transition:border-color .15s}
-.edit-ta:focus{border-color:var(--ink-3);background:var(--paper)}
+.edit-ta{width:100%;font-family:var(--mono);font-size:11.5px;padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel-2);color:var(--ink);outline:none;resize:vertical;line-height:1.55;min-height:80px;max-height:300px;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
+.edit-ta:focus{border-color:var(--accent);background:var(--panel);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* Overlay used only on narrow screens when the sidebar opens as a drawer */
+.overlay{display:none;position:fixed;inset:0;background:rgba(25,24,21,.35);z-index:20}
+.overlay.show{display:block}
+
+/* ============== RESPONSIVE ============== */
+
+/* Tablet / iPad */
+@media (max-width: 1024px){
+  body{padding:0}
+  .shell{max-height:100vh;height:100vh;border-radius:0;box-shadow:none}
+  .sidebar{
+    position:fixed;top:0;left:0;bottom:0;z-index:30;
+    width:min(340px, 84vw);
+    transform:translateX(-100%);
+    box-shadow:20px 0 40px rgba(25,24,21,.18);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .menu-btn{display:flex}
+  .top-bar{height:52px}
+}
+
+/* Small tablet / large phone */
+@media (max-width: 720px){
+  .preview-scroll{padding:22px 18px}
+  .output-bar{padding:0 14px;height:auto;min-height:52px;padding-top:8px;padding-bottom:8px}
+  .output-actions{gap:5px}
+  .btn.sm{padding:7px 10px;font-size:11px}
+  .logo{font-size:14.5px}
+  .char-pill{display:none}
+}
+
+/* Mobile */
+@media (max-width: 560px){
+  .top-bar{padding:0 12px}
+  .logo-mark{width:26px;height:26px;border-radius:7px}
+  .logo-mark svg{width:12px;height:12px}
+  .sidebar{width:88vw}
+  .sidebar-scroll{padding:14px 12px;gap:15px}
+  .sidebar-footer{padding:12px;flex-direction:column}
+  .sidebar-footer .btn{width:100%}
+  .tpl-grid{grid-template-columns:1fr 1fr;gap:5px}
+  .tpl-btn{font-size:11px;padding:8px}
+  .two{grid-template-columns:1fr}
+  .output-bar{flex-direction:row;flex-wrap:wrap}
+  .tabs{order:1}
+  .output-actions{order:2;width:100%;justify-content:flex-start}
+  .preview-scroll{padding:16px 14px}
+  .preview-area h1{font-size:22px}
+  .preview-area h2{font-size:16px}
+  .status-bar{padding:8px 14px;gap:4px}
+  .stat{font-size:10px}
+  .dot-deco{width:120px;height:100px;right:8px;bottom:0}
+}
+
+@media (max-width: 380px){
+  .btn{padding:8px 10px;font-size:11.5px}
+  .btn.primary{flex:1}
+}
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <div class="logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="2" rx="1"/><rect x="11" y="11" width="2" height="2" rx=".5"/></svg>
-    </div>
-    README Generator
-  </div>
-  <span class="char-pill" id="char-count">0 chars</span>
-</div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-<div class="main">
-  <aside class="sidebar">
-    <div style="display:flex;border-bottom:1px solid var(--line);background:var(--paper)">
-      <button class="view-tab active" id="vtab-config" onclick="switchSideTab('config')">Settings</button>
-      <button class="view-tab" id="vtab-edit" onclick="switchSideTab('edit')">Edit sections</button>
-    </div>
-
-    <!-- Settings tab -->
-    <div class="sidebar-scroll" id="side-config">
-      <div>
-        <div class="sec-hdr"><span class="sec-lbl">Templates</span><div class="sec-line"></div></div>
-      <div class="tpl-grid">
-  <button class="tpl-btn cli" onclick="applyTemplate('cli')">
-    <span class="tpl-icon">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
-        <path d="M2.5 4L5 6L2.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M6 8h3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </span>
-    CLI tool
-  </button>
-
-  <button class="tpl-btn lib" onclick="applyTemplate('lib')">
-    <span class="tpl-icon">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="2" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
-        <rect x="3.5" y="0.5" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1" fill="var(--bg2, #f3f1ec)"/>
-        <path d="M5.5 3.5h3M5.5 5.5h3M5.5 7.5h1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-    </span>
-    Library
-  </button>
-
-  <button class="tpl-btn webapp" onclick="applyTemplate('webapp')">
-    <span class="tpl-icon">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0.5" y="1.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
-        <path d="M0.5 4h11" stroke="currentColor" stroke-width="1"/>
-        <circle cx="2.5" cy="2.75" r="0.6" fill="currentColor"/>
-        <circle cx="4.5" cy="2.75" r="0.6" fill="currentColor"/>
-        <circle cx="6.5" cy="2.75" r="0.6" fill="currentColor"/>
-        <path d="M3 7h2.5M3 8.5h5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-    </span>
-    Web app
-  </button>
-
-  <button class="tpl-btn api" onclick="applyTemplate('api')">
-    <span class="tpl-icon">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 4.5h10M1 7.5h10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-        <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
-        <path d="M4.5 4.5v3M7.5 4.5v3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-    </span>
-    REST API
-  </button>
-</div>
+<div class="shell">
+  <div class="top-bar">
+    <button class="menu-btn" id="menu-btn" onclick="openSidebar()" aria-label="Open settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="2" rx="1"/><rect x="11" y="11" width="2" height="2" rx=".5"/></svg>
       </div>
-      <hr class="div"/>
-      <div>
-        <div class="sec-hdr"><span class="sec-lbl">Basics</span><div class="sec-line"></div></div>
-        <div class="field"><label class="fl">Project name</label><input type="text" id="proj-name" placeholder="my-awesome-project"/></div>
-        <div class="field"><label class="fl">Tagline</label><input type="text" id="proj-desc" placeholder="A tool that does X really well"/></div>
-        <div class="two">
-          <div class="field"><label class="fl">GitHub username</label><input type="text" id="author" placeholder="yourusername"/></div>
-          <div class="field"><label class="fl">License</label>
-            <select id="license-type">
-              <option>MIT</option><option>Apache-2.0</option><option>GPL-3.0</option>
-              <option>BSD-2-Clause</option><option>ISC</option><option>Unlicense</option>
-            </select>
+      README Generator
+    </div>
+    <div class="top-right">
+      <span class="char-pill" id="char-count">0 chars</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-tabs-row">
+        <button class="view-tab active" id="vtab-config" onclick="switchSideTab('config')">Settings</button>
+        <button class="view-tab" id="vtab-edit" onclick="switchSideTab('edit')">Edit sections</button>
+      </div>
+
+      <!-- Settings tab -->
+      <div class="sidebar-scroll" id="side-config">
+        <div>
+          <div class="sec-hdr"><span class="sec-num">1</span><span class="sec-lbl">Templates</span><div class="sec-line"></div></div>
+          <div class="tpl-grid">
+            <button class="tpl-btn cli" onclick="applyTemplate('cli')">
+              <span class="tpl-icon">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
+                  <path d="M2.5 4L5 6L2.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 8h3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              CLI tool
+            </button>
+            <button class="tpl-btn lib" onclick="applyTemplate('lib')">
+              <span class="tpl-icon">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="1" y="2" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                  <rect x="3.5" y="0.5" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1" fill="var(--panel-2)"/>
+                  <path d="M5.5 3.5h3M5.5 5.5h3M5.5 7.5h1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+              </span>
+              Library
+            </button>
+            <button class="tpl-btn webapp" onclick="applyTemplate('webapp')">
+              <span class="tpl-icon">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0.5" y="1.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                  <path d="M0.5 4h11" stroke="currentColor" stroke-width="1"/>
+                  <circle cx="2.5" cy="2.75" r="0.6" fill="currentColor"/>
+                  <circle cx="4.5" cy="2.75" r="0.6" fill="currentColor"/>
+                  <circle cx="6.5" cy="2.75" r="0.6" fill="currentColor"/>
+                  <path d="M3 7h2.5M3 8.5h5.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+              </span>
+              Web app
+            </button>
+            <button class="tpl-btn api" onclick="applyTemplate('api')">
+              <span class="tpl-icon">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 4.5h10M1 7.5h10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                  <rect x="0.5" y="0.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1"/>
+                  <path d="M4.5 4.5v3M7.5 4.5v3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+              </span>
+              REST API
+            </button>
           </div>
         </div>
-        <div class="field"><label class="fl">Install command</label><input type="text" id="install-cmd" placeholder="npm install my-package"/></div>
-        <div class="field"><label class="fl">Demo URL <span style="color:var(--ink-4)">(optional)</span></label><input type="text" id="demo-url" placeholder="https://my-project.vercel.app"/></div>
-      </div>
-      <hr class="div"/>
-      <div>
-        <div class="sec-hdr"><span class="sec-lbl">Badges</span><div class="sec-line"></div></div>
-        <div class="chips" id="badge-row">
-          <button class="chip on" data-badge="license">License</button>
-          <button class="chip on" data-badge="stars">Stars</button>
-          <button class="chip" data-badge="issues">Issues</button>
-          <button class="chip" data-badge="forks">Forks</button>
-          <button class="chip" data-badge="npm">npm</button>
-          <button class="chip" data-badge="ci">CI</button>
-          <button class="chip" data-badge="coverage">Coverage</button>
-          <button class="chip" data-badge="version">Version</button>
-          <button class="chip" data-badge="downloads">Downloads</button>
-          <button class="chip" data-badge="prs">PRs welcome</button>
+        <hr class="div"/>
+        <div>
+          <div class="sec-hdr"><span class="sec-num">2</span><span class="sec-lbl">Basics</span><div class="sec-line"></div></div>
+          <div class="field"><label class="fl">Project name</label><input type="text" id="proj-name" placeholder="my-awesome-project"/></div>
+          <div class="field"><label class="fl">Tagline</label><input type="text" id="proj-desc" placeholder="A tool that does X really well"/></div>
+          <div class="two">
+            <div class="field"><label class="fl">GitHub username</label><input type="text" id="author" placeholder="yourusername"/></div>
+            <div class="field"><label class="fl">License</label>
+              <select id="license-type">
+                <option>MIT</option><option>Apache-2.0</option><option>GPL-3.0</option>
+                <option>BSD-2-Clause</option><option>ISC</option><option>Unlicense</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label class="fl">Install command</label><input type="text" id="install-cmd" placeholder="npm install my-package"/></div>
+          <div class="field"><label class="fl">Demo URL <span style="color:var(--ink-4)">(optional)</span></label><input type="text" id="demo-url" placeholder="https://my-project.vercel.app"/></div>
+        </div>
+        <hr class="div"/>
+        <div>
+          <div class="sec-hdr"><span class="sec-num">3</span><span class="sec-lbl">Badges</span><div class="sec-line"></div></div>
+          <div class="chips" id="badge-row">
+            <button class="chip on" data-badge="license">License</button>
+            <button class="chip on" data-badge="stars">Stars</button>
+            <button class="chip" data-badge="issues">Issues</button>
+            <button class="chip" data-badge="forks">Forks</button>
+            <button class="chip" data-badge="npm">npm</button>
+            <button class="chip" data-badge="ci">CI</button>
+            <button class="chip" data-badge="coverage">Coverage</button>
+            <button class="chip" data-badge="version">Version</button>
+            <button class="chip" data-badge="downloads">Downloads</button>
+            <button class="chip" data-badge="prs">PRs welcome</button>
+          </div>
+        </div>
+        <hr class="div"/>
+        <div>
+          <div class="sec-hdr"><span class="sec-num">4</span><span class="sec-lbl">Tech stack</span><div class="sec-line"></div></div>
+          <div class="chips" id="tech-grid">
+            <button class="chip" data-tech="React">React</button>
+            <button class="chip" data-tech="TypeScript">TypeScript</button>
+            <button class="chip" data-tech="Node.js">Node.js</button>
+            <button class="chip" data-tech="Python">Python</button>
+            <button class="chip" data-tech="Go">Go</button>
+            <button class="chip" data-tech="Rust">Rust</button>
+            <button class="chip" data-tech="Docker">Docker</button>
+            <button class="chip" data-tech="PostgreSQL">PostgreSQL</button>
+            <button class="chip" data-tech="MongoDB">MongoDB</button>
+            <button class="chip" data-tech="Redis">Redis</button>
+            <button class="chip" data-tech="GraphQL">GraphQL</button>
+            <button class="chip" data-tech="Tailwind">Tailwind</button>
+            <button class="chip" data-tech="Next.js">Next.js</button>
+            <button class="chip" data-tech="Bun">Bun</button>
+            <button class="chip" data-tech="Deno">Deno</button>
+          </div>
+          <div class="field" style="margin-top:8px"><input type="text" id="custom-tech" placeholder="Custom stack, comma separated"/></div>
+        </div>
+        <hr class="div"/>
+        <div>
+          <div class="sec-hdr"><span class="sec-num">5</span><span class="sec-lbl">Sections</span><div class="sec-line"></div></div>
+          <div class="checks">
+            <label class="check"><input type="checkbox" id="sec-features" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Features</span></label>
+            <label class="check"><input type="checkbox" id="sec-install" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Installation</span></label>
+            <label class="check"><input type="checkbox" id="sec-usage" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Usage</span></label>
+            <label class="check"><input type="checkbox" id="sec-api"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">API reference</span></label>
+            <label class="check"><input type="checkbox" id="sec-config"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Configuration</span></label>
+            <label class="check"><input type="checkbox" id="sec-env"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Environment variables</span></label>
+            <label class="check"><input type="checkbox" id="sec-docker"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Docker setup</span></label>
+            <label class="check"><input type="checkbox" id="sec-contributing" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Contributing</span></label>
+            <label class="check"><input type="checkbox" id="sec-license" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">License</span></label>
+            <label class="check"><input type="checkbox" id="sec-roadmap"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Roadmap</span></label>
+            <label class="check"><input type="checkbox" id="sec-acknowledgements"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Acknowledgements</span></label>
+            <label class="check"><input type="checkbox" id="sec-faq"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">FAQ</span></label>
+          </div>
         </div>
       </div>
-      <hr class="div"/>
-      <div>
-        <div class="sec-hdr"><span class="sec-lbl">Tech stack</span><div class="sec-line"></div></div>
-        <div class="chips" id="tech-grid">
-          <button class="chip" data-tech="React">React</button>
-          <button class="chip" data-tech="TypeScript">TypeScript</button>
-          <button class="chip" data-tech="Node.js">Node.js</button>
-          <button class="chip" data-tech="Python">Python</button>
-          <button class="chip" data-tech="Go">Go</button>
-          <button class="chip" data-tech="Rust">Rust</button>
-          <button class="chip" data-tech="Docker">Docker</button>
-          <button class="chip" data-tech="PostgreSQL">PostgreSQL</button>
-          <button class="chip" data-tech="MongoDB">MongoDB</button>
-          <button class="chip" data-tech="Redis">Redis</button>
-          <button class="chip" data-tech="GraphQL">GraphQL</button>
-          <button class="chip" data-tech="Tailwind">Tailwind</button>
-          <button class="chip" data-tech="Next.js">Next.js</button>
-          <button class="chip" data-tech="Bun">Bun</button>
-          <button class="chip" data-tech="Deno">Deno</button>
-        </div>
-        <div class="field" style="margin-top:8px"><input type="text" id="custom-tech" placeholder="Custom stack, comma separated"/></div>
+
+      <!-- Edit sections tab -->
+      <div class="edit-panel" id="side-edit">
+        <p style="font-size:11.5px;color:var(--ink-4);padding:4px 2px 6px;line-height:1.5">Edit the content for each section. Changes reflect instantly in the preview.</p>
+        <div id="edit-sections-list"></div>
       </div>
-      <hr class="div"/>
-      <div>
-        <div class="sec-hdr"><span class="sec-lbl">Sections</span><div class="sec-line"></div></div>
-        <div class="checks">
-          <label class="check"><input type="checkbox" id="sec-features" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Features</span></label>
-          <label class="check"><input type="checkbox" id="sec-install" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Installation</span></label>
-          <label class="check"><input type="checkbox" id="sec-usage" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Usage</span></label>
-          <label class="check"><input type="checkbox" id="sec-api"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">API reference</span></label>
-          <label class="check"><input type="checkbox" id="sec-config"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Configuration</span></label>
-          <label class="check"><input type="checkbox" id="sec-env"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Environment variables</span></label>
-          <label class="check"><input type="checkbox" id="sec-docker"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Docker setup</span></label>
-          <label class="check"><input type="checkbox" id="sec-contributing" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Contributing</span></label>
-          <label class="check"><input type="checkbox" id="sec-license" checked/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">License</span></label>
-          <label class="check"><input type="checkbox" id="sec-roadmap"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Roadmap</span></label>
-          <label class="check"><input type="checkbox" id="sec-acknowledgements"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">Acknowledgements</span></label>
-          <label class="check"><input type="checkbox" id="sec-faq"/><span class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="check-lbl">FAQ</span></label>
+
+      <div class="sidebar-footer">
+        <button class="btn primary" onclick="generateReadme()" style="flex:1">Generate README</button>
+        <button class="btn ghost sm" onclick="resetForm()">Reset</button>
+      </div>
+    </aside>
+
+    <!-- Right panel -->
+    <div class="right">
+      <div class="output-bar">
+        <div class="tabs">
+          <button class="tab active" id="tab-preview" onclick="switchTab('preview')">Rendered</button>
+          <button class="tab" id="tab-raw" onclick="switchTab('raw')">Markdown</button>
+        </div>
+        <div class="output-actions">
+          <span class="notif" id="copy-notif">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Copied!
+          </span>
+          <button class="btn sm" onclick="copyMarkdown()">Copy markdown</button>
+          <button class="btn sm primary" onclick="downloadReadme()">Download README.md</button>
         </div>
       </div>
-    </div>
-
-    <!-- Edit sections tab -->
-    <div class="edit-panel" id="side-edit">
-      <p style="font-size:11.5px;color:var(--ink-4);padding:4px 2px 6px;line-height:1.5">Edit the content for each section. Changes reflect instantly in the preview.</p>
-      <div id="edit-sections-list"></div>
-    </div>
-
-    <div class="sidebar-footer">
-      <button class="btn primary" onclick="generateReadme()" style="flex:1">Generate README</button>
-      <button class="btn ghost sm" onclick="resetForm()">Reset</button>
-    </div>
-  </aside>
-
-  <!-- Right panel -->
-  <div class="right">
-    <div class="output-bar">
-      <div class="tabs">
-        <button class="tab active" id="tab-preview" onclick="switchTab('preview')">Rendered</button>
-        <button class="tab" id="tab-raw" onclick="switchTab('raw')">Markdown</button>
+      <div class="preview-scroll">
+        <div id="preview-content" class="preview-area"></div>
+        <div id="raw-content" class="raw-area" style="display:none"></div>
+        <div class="dot-deco"></div>
       </div>
-      <div class="output-actions">
-        <span class="notif" id="copy-notif">
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Copied!
-        </span>
-        <button class="btn sm" onclick="copyMarkdown()">Copy markdown</button>
-        <button class="btn sm primary" onclick="downloadReadme()">Download README.md</button>
+      <div class="status-bar">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="stat"><strong id="stat-words">0</strong> words</span>
+        <span class="dot"></span>
+        <span class="stat"><strong id="stat-sections">0</strong> sections</span>
+        <span class="dot"></span>
+        <span class="stat"><strong id="stat-chars">0</strong> chars</span>
       </div>
-    </div>
-    <div class="preview-scroll">
-      <div id="preview-content" class="preview-area"></div>
-      <div id="raw-content" class="raw-area" style="display:none"></div>
-    </div>
-    <div class="status-bar">
-      <span class="status-dot" id="status-dot"></span>
-      <span class="stat"><strong id="stat-words">0</strong> words</span>
-      <span class="dot"></span>
-      <span class="stat"><strong id="stat-sections">0</strong> sections</span>
-      <span class="dot"></span>
-      <span class="stat"><strong id="stat-chars">0</strong> chars</span>
     </div>
   </div>
 </div>
 
-<script src="script.js">
+<script>
+let currentTab = 'preview';
+let generatedMarkdown = '';
+let currentSideTab = 'config';
+let customContent = {};
+
+const badgeUrls = {
+  license:   (n, a) => `[![License](https://img.shields.io/github/license/${a}/${n})](LICENSE)`,
+  stars:     (n, a) => `[![Stars](https://img.shields.io/github/stars/${a}/${n}?style=social)](https://github.com/${a}/${n})`,
+  issues:    (n, a) => `[![Issues](https://img.shields.io/github/issues/${a}/${n})](https://github.com/${a}/${n}/issues)`,
+  forks:     (n, a) => `[![Forks](https://img.shields.io/github/forks/${a}/${n})](https://github.com/${a}/${n}/network)`,
+  npm:       (n)    => `[![npm](https://img.shields.io/npm/v/${n})](https://npmjs.com/package/${n})`,
+  ci:        (n, a) => `[![CI](https://img.shields.io/github/actions/workflow/status/${a}/${n}/ci.yml)](https://github.com/${a}/${n}/actions)`,
+  coverage:  (n, a) => `[![Coverage](https://img.shields.io/codecov/c/github/${a}/${n})](https://codecov.io/gh/${a}/${n})`,
+  version:   (n, a) => `[![Version](https://img.shields.io/github/v/release/${a}/${n})](https://github.com/${a}/${n}/releases)`,
+  downloads: (n, a) => `[![Downloads](https://img.shields.io/github/downloads/${a}/${n}/total)](https://github.com/${a}/${n}/releases)`,
+  prs:       ()     => `[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)`,
+};
+
+const techBadgeMap = {
+  "React": "react", "TypeScript": "typescript", "Node.js": "node.js", "Python": "python",
+  "Go": "go", "Rust": "rust", "Docker": "docker", "PostgreSQL": "postgresql",
+  "MongoDB": "mongodb", "Redis": "redis", "GraphQL": "graphql", "Tailwind": "tailwindcss",
+  "Next.js": "next.js", "Bun": "bun", "Deno": "deno",
+};
+
+const templates = {
+  cli:    { name:'my-cli-tool',  desc:'A fast, ergonomic command-line tool for developers',     cmd:'npm install -g my-cli-tool',  techs:['Node.js','TypeScript'],          sections:{features:true,install:true,usage:true,config:true,license:true,contributing:true} },
+  lib:    { name:'my-lib',       desc:'A lightweight, zero-dependency utility library',          cmd:'npm install my-lib',           techs:['TypeScript'],                    sections:{features:true,install:true,usage:true,api:true,license:true,contributing:true} },
+  webapp: { name:'my-app',       desc:'A modern web application built for speed and scale',     cmd:'npm install && npm run dev',   techs:['React','TypeScript','Tailwind'], sections:{features:true,install:true,usage:true,env:true,docker:true,contributing:true,license:true} },
+  api:    { name:'my-api',       desc:'A RESTful API service with clean, expressive endpoints', cmd:'npm install && npm start',     techs:['Node.js','PostgreSQL','Docker'], sections:{features:true,install:true,api:true,env:true,docker:true,contributing:true,license:true} },
+};
+
+const sectionDefaults = {
+  features:        `- **Fast** — optimised for performance with minimal overhead\n- **Simple API** — intuitive interface with sensible defaults\n- **Extensible** — plugin-friendly architecture for custom integrations\n- **Typed** — full TypeScript support with accurate types`,
+  install:         ``,
+  usage:           ``,
+  api:             `### \`run(options)\`\n\nStarts the process with the given options.\n\n| Param | Type | Default | Description |\n|-------|------|---------|-------------|\n| \`options.timeout\` | \`number\` | \`5000\` | Max wait time in ms |\n| \`options.verbose\` | \`boolean\` | \`false\` | Enable debug logging |\n\n**Returns:** \`Promise<r>\``,
+  config:          `Create a \`.projectrc.json\` file in your project root:\n\n\`\`\`json\n{\n  "option": "value",\n  "enabled": true,\n  "timeout": 5000\n}\n\`\`\``,
+  env:             `Copy \`.env.example\` to \`.env\` and fill in the values:\n\`\`\`bash\nAPP_PORT=3000\nDATABASE_URL=postgres://localhost:5432/mydb\nSECRET_KEY=your-secret-key\n\`\`\``,
+  docker:          `\`\`\`bash\n# Build and start containers\ndocker compose up -d\n\n# Run migrations\ndocker compose exec app npm run migrate\n\`\`\``,
+  contributing:    `Contributions are welcome — thank you for helping make this better!\n\n1. Fork the repository\n2. Create your feature branch: \`git checkout -b feat/my-feature\`\n3. Commit your changes: \`git commit -m 'feat: add my feature'\`\n4. Push to the branch: \`git push origin feat/my-feature\`\n5. Open a pull request\n\nPlease read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct.`,
+  license:         ``,
+  roadmap:         `- [x] Core functionality\n- [x] TypeScript support\n- [ ] Plugin system\n- [ ] CLI companion\n- [ ] Official documentation site`,
+  acknowledgements:`- [Awesome library](https://example.com) — inspiration and ideas\n- [Another tool](https://example.com) — used for building X`,
+  faq:             `**Q: Does it work on Windows?**\nA: Yes, all major platforms are supported.\n\n**Q: Is it production-ready?**\nA: The library is stable and used in production by several teams.`,
+};
+
+const sectionLabels = {
+  features:'Features', install:'Installation', usage:'Usage', api:'API Reference',
+  config:'Configuration', env:'Environment Variables', docker:'Docker Setup',
+  contributing:'Contributing', license:'License', roadmap:'Roadmap',
+  acknowledgements:'Acknowledgements', faq:'FAQ',
+};
+
+const sectionHints = {
+  features:        'List your key features. Supports markdown.',
+  install:         'Leave blank to auto-generate from the install command above.',
+  usage:           'Code examples and usage instructions. Supports markdown + code blocks.',
+  api:             'Document your API methods, params, and return values.',
+  config:          'Show configuration file format and options.',
+  env:             'List required environment variables.',
+  docker:          'Docker/compose setup commands.',
+  contributing:    'Guidelines for contributors.',
+  license:         'Leave blank to auto-generate from license selection.',
+  roadmap:         'Future plans. Use `- [x]` for done, `- [ ]` for pending.',
+  acknowledgements:'Credits and attributions.',
+  faq:             'Common questions and answers.',
+};
+
+/* ---------- mobile sidebar drawer ---------- */
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function switchSideTab(tab) {
+  currentSideTab = tab;
+  document.getElementById('vtab-config').classList.toggle('active', tab === 'config');
+  document.getElementById('vtab-edit').classList.toggle('active', tab === 'edit');
+  document.getElementById('side-config').style.display = tab === 'config' ? '' : 'none';
+  const ep = document.getElementById('side-edit');
+  if (tab === 'edit') { ep.classList.add('show'); buildEditPanel(); }
+  else ep.classList.remove('show');
+}
+
+function buildEditPanel() {
+  const list = document.getElementById('edit-sections-list');
+  const allSecs = ['features','install','usage','api','config','env','docker','contributing','license','roadmap','acknowledgements','faq'];
+  list.innerHTML = '';
+  allSecs.forEach(key => {
+    const checkbox = document.getElementById('sec-' + key);
+    const isEnabled = checkbox && checkbox.checked;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'edit-section';
+    wrap.style.opacity = isEnabled ? '1' : '0.45';
+    wrap.style.marginBottom = '8px';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'edit-section-hdr';
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '▼';
+    const statusText = document.createElement('span');
+    statusText.style.cssText = 'font-size:10px;color:var(--ink-4);margin-right:6px';
+    statusText.textContent = isEnabled ? 'enabled' : 'disabled';
+    const right = document.createElement('span');
+    right.style.display = 'flex';
+    right.style.alignItems = 'center';
+    right.appendChild(statusText);
+    right.appendChild(chevron);
+    hdr.appendChild(document.createTextNode(sectionLabels[key]));
+    hdr.appendChild(right);
+
+    const body = document.createElement('div');
+    body.className = 'edit-section-body';
+
+    const hint = document.createElement('p');
+    hint.className = 'edit-hint';
+    hint.textContent = sectionHints[key];
+
+    const ta = document.createElement('textarea');
+    ta.className = 'edit-ta';
+    ta.placeholder = 'Custom content (leave blank for auto-generated)...';
+    ta.value = customContent[key] || '';
+    ta.addEventListener('input', () => {
+      customContent[key] = ta.value;
+      generateReadme();
+    });
+
+    body.appendChild(hint);
+    body.appendChild(ta);
+
+    hdr.addEventListener('click', () => {
+      const open = body.classList.toggle('show');
+      chevron.style.transform = open ? 'rotate(180deg)' : '';
+    });
+
+    if (isEnabled) {
+      body.classList.add('show');
+      chevron.style.transform = 'rotate(180deg)';
+    }
+
+    wrap.appendChild(hdr);
+    wrap.appendChild(body);
+    list.appendChild(wrap);
+  });
+}
+
+function getContent(key) {
+  return (customContent[key] && customContent[key].trim()) ? customContent[key] : null;
+}
+
+function applyTemplate(t) {
+  const tpl = templates[t];
+  document.getElementById('proj-name').value = tpl.name;
+  document.getElementById('proj-desc').value = tpl.desc;
+  document.getElementById('install-cmd').value = tpl.cmd;
+  document.querySelectorAll('.chip[data-tech]').forEach(b => b.classList.toggle('on', tpl.techs.includes(b.dataset.tech)));
+  const secs = ['features','install','usage','api','config','env','docker','contributing','license','roadmap','acknowledgements','faq'];
+  secs.forEach(s => { const el = document.getElementById('sec-' + s); if (el) el.checked = !!(tpl.sections[s]); });
+  if (currentSideTab === 'edit') buildEditPanel();
+  generateReadme();
+}
+
+document.querySelectorAll('.chip[data-badge]').forEach(b => b.addEventListener('click', () => { b.classList.toggle('on'); generateReadme(); }));
+document.querySelectorAll('.chip[data-tech]').forEach(b => b.addEventListener('click', () => { b.classList.toggle('on'); generateReadme(); }));
+document.querySelectorAll('#side-config input, #side-config textarea, #side-config select').forEach(el => {
+  el.addEventListener('input', () => { if (currentSideTab === 'edit') buildEditPanel(); generateReadme(); });
+});
+document.querySelectorAll('.check input[type=checkbox]').forEach(cb => {
+  cb.addEventListener('change', () => { if (currentSideTab === 'edit') buildEditPanel(); generateReadme(); });
+});
+
+function getSelectedTechs() {
+  const sel = [...document.querySelectorAll('.chip[data-tech].on')].map(b => b.dataset.tech);
+  const custom = document.getElementById('custom-tech').value.split(',').map(s => s.trim()).filter(Boolean);
+  return [...sel, ...custom];
+}
+function getActiveBadges() { return [...document.querySelectorAll('.chip[data-badge].on')].map(b => b.dataset.badge); }
+function toCamel(s) { return s.replace(/[-_](.)/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toLowerCase()); }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function countSections(md) { return (md.match(/^## /gm) || []).length; }
+function countWords(md) { return md.replace(/```[\s\S]*?```/g, '').trim().split(/\s+/).filter(Boolean).length; }
+
+function toRepoName(name) { return name.trim().replace(/\s+/g, '-'); }
+
+function buildMarkdown() {
+  const rawName    = document.getElementById('proj-name').value.trim() || 'my-project';
+  const name       = rawName;
+  const desc       = document.getElementById('proj-desc').value.trim()   || 'A description of your project.';
+  const author     = document.getElementById('author').value.trim()      || 'yourusername';
+  const installCmd = document.getElementById('install-cmd').value.trim() || `npm install ${name}`;
+  const demoUrl    = document.getElementById('demo-url').value.trim();
+  const license    = document.getElementById('license-type').value;
+  const techs      = getSelectedTechs();
+  const badges     = getActiveBadges();
+  const g          = id => document.getElementById(id).checked;
+
+  let md = `# ${name}\n\n`;
+  if (badges.length) md += badges.map(b => badgeUrls[b](name, author)).join(' ') + '\n\n';
+  md += `> ${desc}\n\n`;
+  if (demoUrl) md += `[Live demo](${demoUrl}) · [Report bug](https://github.com/${author}/${name}/issues) · [Request feature](https://github.com/${author}/${name}/issues)\n\n`;
+  else         md += `[Report bug](https://github.com/${author}/${name}/issues) · [Request feature](https://github.com/${author}/${name}/issues)\n\n`;
+
+  if (techs.length) {
+    md += `## Built with\n\n`;
+    md += generateTechBadges(techs) + '\n\n';
+  }
+
+  if (g('sec-features')) { const c = getContent('features'); md += `## Features\n\n${c || sectionDefaults.features}\n\n`; }
+  if (g('sec-install'))  { const c = getContent('install');  md += `## Installation\n\n${c || `\`\`\`bash\n${installCmd}\n\`\`\``}\n\n`; }
+  if (g('sec-usage'))    { const c = getContent('usage');    md += `## Usage\n\n${c || `\`\`\`js\nimport ${toCamel(name)} from '${name}';\n\nconst instance = ${toCamel(name)}({\n  option: 'value',\n});\n\ninstance.run();\n\`\`\``}\n\n`; }
+  if (g('sec-api'))      { const c = getContent('api');      md += `## API reference\n\n${c || sectionDefaults.api}\n\n`; }
+  if (g('sec-config'))   { const c = getContent('config');   md += `## Configuration\n\n${c || sectionDefaults.config}\n\n`; }
+  if (g('sec-env'))      { const c = getContent('env');      md += `## Environment variables\n\n${c || sectionDefaults.env}\n\n`; }
+  if (g('sec-docker'))   { const c = getContent('docker');   md += `## Docker setup\n\n${c || sectionDefaults.docker}\n\n`; }
+  if (g('sec-roadmap'))  { const c = getContent('roadmap');  md += `## Roadmap\n\n${c || sectionDefaults.roadmap}\n\nSee [open issues](https://github.com/${author}/${name}/issues) for the full list.\n\n`; }
+  if (g('sec-contributing')) { const c = getContent('contributing'); md += `## Contributing\n\n${c || sectionDefaults.contributing}\n\n`; }
+  if (g('sec-faq'))      { const c = getContent('faq');      md += `## FAQ\n\n${c || sectionDefaults.faq}\n\n`; }
+  if (g('sec-acknowledgements')) { const c = getContent('acknowledgements'); md += `## Acknowledgements\n\n${c || sectionDefaults.acknowledgements}\n\n`; }
+  if (g('sec-license'))  { const c = getContent('license');  md += `## License\n\n${c || `[${license}](LICENSE) — © ${new Date().getFullYear()} [${author}](https://github.com/${author})`}\n`; }
+
+  return md;
+}
+
+function markdownToHtml(md) {
+  const codeBlocks = [];
+  md = md.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<pre><code>${escHtml(code.trim())}</code></pre>`);
+    return `%%CODEBLOCK_${idx}%%`;
+  });
+
+  const inlineCodes = [];
+  md = md.replace(/`([^`]+)`/g, (_, code) => {
+    const idx = inlineCodes.length;
+    inlineCodes.push(`<code>${escHtml(code)}</code>`);
+    return `%%INLINECODE_${idx}%%`;
+  });
+
+  md = md
+    .replace(/^# (.+)$/gm,   '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, '<a href="$3"><img src="$2" alt="$1"/></a>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1"/>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/^\> (.+)$/gm, '<blockquote>$1</blockquote>')
+    .replace(/^\- \[x\] (.+)$/gm, '<li style="list-style:none">✓ <s>$1</s></li>')
+    .replace(/^\- \[ \] (.+)$/gm, '<li style="list-style:none">&#9633; $1</li>')
+    .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li[^>]*>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+    .replace(/(<\/ul>\s*<ul>)/g, '')
+    .replace(/\|(.+)\|/g, m => {
+      const cells = m.split('|').filter(c => c.trim() !== '');
+      if (cells.every(c => /^[-: ]+$/.test(c))) return '';
+      return '<tr>' + cells.map(c => `<td>${c.trim()}</td>`).join('') + '</tr>';
+    })
+    .replace(/(<tr>[\s\S]*?<\/tr>)/g, m => `<table>${m}</table>`)
+    .replace(/(<\/table>\s*<table[^>]*>)/g, '')
+    .replace(/^(?!<[hbuptlosr%])(.*\S.*)$/gm, '<p>$1</p>')
+    .replace(/<p><\/p>/g, '')
+    .replace(/\n{2,}/g, '');
+
+  codeBlocks.forEach((block, i) => { md = md.replace(`%%CODEBLOCK_${i}%%`, block); });
+  inlineCodes.forEach((code, i) => { md = md.replace(`%%INLINECODE_${i}%%`, code); });
+
+  return md;
+}
+
+function generateReadme() {
+  generatedMarkdown = buildMarkdown();
+  const chars    = generatedMarkdown.length;
+  const words    = countWords(generatedMarkdown);
+  const sections = countSections(generatedMarkdown);
+  document.getElementById('char-count').textContent    = chars.toLocaleString() + ' chars';
+  document.getElementById('stat-chars').textContent    = chars.toLocaleString();
+  document.getElementById('stat-words').textContent    = words.toLocaleString();
+  document.getElementById('stat-sections').textContent = sections;
+  document.getElementById('status-dot').className = 'status-dot' + (chars > 100 ? ' live' : '');
+  if (currentTab === 'preview') document.getElementById('preview-content').innerHTML = markdownToHtml(generatedMarkdown);
+  else document.getElementById('raw-content').textContent = generatedMarkdown;
+}
+
+function generateTechBadges(techs) {
+  return techs.map(t => {
+    const key = techBadgeMap[t] || t.toLowerCase().replace(/\s+/g, '-');
+    return `![${t}](https://img.shields.io/badge/-${encodeURIComponent(t)}-black?style=flat&logo=${key})`;
+  }).join(' ');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-preview').classList.toggle('active', tab === 'preview');
+  document.getElementById('tab-raw').classList.toggle('active', tab === 'raw');
+  document.getElementById('preview-content').style.display = tab === 'preview' ? '' : 'none';
+  document.getElementById('raw-content').style.display     = tab === 'raw'     ? '' : 'none';
+  if (tab === 'raw') document.getElementById('raw-content').textContent = generatedMarkdown;
+  else document.getElementById('preview-content').innerHTML = markdownToHtml(generatedMarkdown);
+}
+
+function copyMarkdown() {
+  if (!generatedMarkdown) return;
+  const finish = () => {
+    const n = document.getElementById('copy-notif');
+    n.classList.add('show');
+    setTimeout(() => n.classList.remove('show'), 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(generatedMarkdown).then(finish).catch(() => fallbackCopy(generatedMarkdown, finish));
+  } else {
+    fallbackCopy(generatedMarkdown, finish);
+  }
+}
+
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); cb(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function downloadReadme() {
+  if (!generatedMarkdown) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([generatedMarkdown], { type: 'text/markdown' }));
+  a.download = 'README.md';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function resetForm() {
+  document.getElementById('proj-name').value   = '';
+  document.getElementById('proj-desc').value   = '';
+  document.getElementById('author').value      = '';
+  document.getElementById('install-cmd').value = '';
+  document.getElementById('demo-url').value    = '';
+  document.getElementById('custom-tech').value = '';
+  customContent = {};
+  document.querySelectorAll('.chip').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.chip[data-badge="license"], .chip[data-badge="stars"]').forEach(b => b.classList.add('on'));
+  const defaults = ['sec-features','sec-install','sec-usage','sec-contributing','sec-license'];
+  document.querySelectorAll('.check input[type=checkbox]').forEach(cb => cb.checked = defaults.includes(cb.id));
+  if (currentSideTab === 'edit') buildEditPanel();
+  generateReadme();
+}
+
+// close mobile drawer automatically once the viewport grows back to desktop size
+window.addEventListener('resize', () => { if (window.innerWidth > 1024) closeSidebar(); });
+
+// Init
+document.getElementById('side-config').style.display = '';
+generateReadme();
 </script>
 </body>
 </html>
